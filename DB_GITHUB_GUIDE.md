@@ -30,7 +30,7 @@ This guide will help you set up an online database (MongoDB Atlas) and host your
 1.  Open the `.env` file in your project folder.
 2.  Paste your connection string.
 3.  Replace `<password>` with your actual password.
-    *   Example: `MONGO_URI=mongodb+srv://admin:MySecurePass123@cluster0.mongodb.net/touristID?retryWrites=true&w=majority`
+    *   Example: `MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/touristID`
 4.  Save the file.
 
 ---

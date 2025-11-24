@@ -7,7 +7,7 @@ const MODE = "B"; // Full Features
 
 // API Configuration
 // CHANGE THIS URL AFTER DEPLOYING TO RENDER (e.g., "https://your-app.onrender.com")
-const API_BASE_URL = "https://smart-tourist-safety-monitoring-and-response-app.onrender.com";
+const API_BASE_URL = "https://smart-tourist-safety-monitoring-and.onrender.com";
 
 // State
 let currentUser = null; // { name, id, phone, type }
