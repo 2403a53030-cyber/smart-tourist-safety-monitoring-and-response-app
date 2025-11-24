@@ -5,6 +5,10 @@
 
 const MODE = "B"; // Full Features
 
+// API Configuration
+// CHANGE THIS URL AFTER DEPLOYING TO RENDER (e.g., "https://your-app.onrender.com")
+const API_BASE_URL = "http://localhost:5000";
+
 // State
 let currentUser = null; // { name, id, phone, type }
 let selectedType = null;
@@ -294,7 +298,7 @@ async function handleRegistration(e) {
 
   // Attempt Backend Registration
   try {
-    const res = await fetch('http://localhost:5000/register', {
+    const res = await fetch(`${API_BASE_URL}/register`, {
       method: 'POST',
       body: formData
     });
