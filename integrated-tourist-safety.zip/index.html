@@ -1,0 +1,229 @@
+<!DOCTYPE html>     
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Tourist Safety Monitoring System - Government of India</title>
+
+  <!-- External Libraries (safe to include for all modes) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- Map + Heat (used in MODE B only; harmless otherwise) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <!-- Header -->
+  <header class="gov-header">
+    <div class="container gov-header__content">
+      <div class="gov-emblem">
+        <div class="national-emblem">
+    <img src="emblem.png" alt="emblem-img" class="emblem-img">
+</div>
+
+        <div class="emblem-text">
+          <h1>भारत सरकार<br>Government of India</h1>
+          <div class="motto">सत्यमेव जयते</div>
+          <div class="ministry">Ministry of Tourism</div>
+        </div>
+      </div>
+      <div class="gov-controls">
+        <select id="languageSelector" class="form-control language-selector">
+          <option value="en">English</option>
+          <option value="hi">हिंदी</option>
+          <option value="te">తెలుగు</option>
+        </select>
+        <div class="digital-india">Digital India</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Nav -->
+  <nav class="gov-nav">
+    <div class="container nav-items">
+      <button class="nav-item active" data-section="landing">Home</button>
+      <button class="nav-item" data-section="dashboard">Dashboard</button>
+      <button class="nav-item" data-section="registration">Registration</button>
+      <button class="nav-item" data-section="emergency">Emergency</button>
+      <button class="nav-item" data-section="analytics">Analytics</button>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Landing -->
+    <section id="landing" class="section active">
+      <div class="container hero-section">
+        <h2 class="hero-title">Smart Tourist Safety Monitoring System</h2>
+        <p class="hero-subtitle">Ensuring Safe Tourism Experience Across Incredible India</p>
+
+        <h3>Select User Type</h3>
+        <div class="user-types">
+          <button class="user-type-card" data-type="indian-tourist">🏛️ Indian Tourist</button>
+          <button class="user-type-card" data-type="foreign-tourist">✈️ Foreign Tourist</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Registration -->
+    <section id="registration" class="section">
+      <div class="container card">
+        <div class="card__body">
+          <h3>Tourist Registration</h3>
+
+          <form id="registrationForm">
+            <!-- Indian -->
+            <div id="indianTouristFields" class="registration-fields hidden">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="indianName" class="form-control" onkeypress="return /[a-zA-Z\s]/.test(String.fromCharCode(event.which||event.keyCode))">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Aadhaar Number</label>
+                <input type="text" id="aadhaar" class="form-control" maxlength="14" placeholder="XXXX-XXXX-XXXX">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Home State</label>
+                <select id="homeState" class="form-control">
+                  <option value="">Select State</option>
+                  <option>Telangana</option><option>Andhra Pradesh</option><option>Karnataka</option><option>Tamil Nadu</option><option>Maharashtra</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Foreign -->
+            <div id="foreignTouristFields" class="registration-fields hidden">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="foreignName" class="form-control" onkeypress="return /[a-zA-Z\s]/.test(String.fromCharCode(event.which||event.keyCode))">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Passport Number</label>
+                <input type="text" id="passport" class="form-control" placeholder="A1234567">
+                <span id="passportError" class="error-text"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Visa Type</label>
+                <select id="visaType" class="form-control">
+                  <option>Tourist Visa</option><option>e-Tourist Visa</option><option>Business Visa</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nationality</label>
+                <input type="text" id="nationality" class="form-control" onkeypress="return /[a-zA-Z\s]/.test(String.fromCharCode(event.which||event.keyCode))">
+              </div>
+            </div>
+
+            <!-- Photo (optional) -->
+            <div class="form-group">
+              <label class="form-label">Upload Photo (Optional)</label>
+              <input type="file" id="photoUpload" class="form-control" accept="image/*">
+            </div>
+
+            <!-- Common -->
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" id="phone" class="form-control" maxlength="10" placeholder="10 digits">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" id="email" class="form-control" placeholder="example@email.com">
+            </div>
+
+            <button type="submit" class="btn btn--primary">Generate Digital ID</button>
+          </form>
+
+          <div id="digitalIdResult" class="hidden digital-id-card">
+            <div class="status status--success">Digital ID Generated Successfully!</div>
+            <div class="id-header">Government of India - Tourist Digital ID</div>
+            <img id="idPhotoPreview" class="id-photo hidden" alt="ID Photo">
+            <div id="generatedIdDetails"></div>
+            <div id="qrcode"></div>
+            <!-- The Download button is inserted by JS after ID is generated -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard (used in B) -->
+    <section id="dashboard" class="section">
+      <div class="container">
+        <h2>Monitoring Dashboard</h2>
+
+        <div class="btn-row" id="bControls" style="display:none;">
+          <button id="locateMeBtn" class="btn btn--primary">Locate Me</button>
+          <button id="trackToggleBtn" class="btn">Start Live Tracking</button>
+          <button id="saveLocationBtn" class="btn btn--primary">Save Location</button>
+          <button id="autoLogBtn" class="btn">Start Auto Travel Log</button>
+          <button id="toggleHeatmapBtn" class="btn">Show Crime Heatmap</button>
+          <span id="gpsStatus" class="subtle"></span>
+        </div>
+
+        <div id="liveMap" style="display:none;"></div>
+
+        <h3 style="margin-top:18px;display:none;" id="travelTitle">Travel History</h3>
+        <ul id="travelList"></ul>
+      </div>
+    </section>
+
+    <!-- Emergency -->
+    <section id="emergency" class="section">
+      <div class="container card">
+        <div class="card__body">
+          <h3>Emergency Response Center</h3>
+          <div class="form-group">
+            <label class="form-label">SOS Contact Number (WhatsApp & SMS)</label>
+            <input type="tel" id="sosContact" class="form-control" placeholder="Enter Emergency Phone Number">
+            <p class="subtle">🔇 Silent SOS hint: (web allows limited key detection)</p>
+          </div>
+          <button id="sosBtn" class="btn btn--primary">🚨 Send SOS Now</button>
+          <span id="sosStatus" class="subtle"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analytics (simple demo) -->
+    <section id="analytics" class="section">
+      <div class="container">
+        <h2>Government Analytics & Reports</h2>
+        <div class="analytics-grid">
+          <div class="card"><div class="card__body"><h3>Tourist Distribution</h3><div class="chart-slot"><canvas id="touristChart"></canvas></div></div></div>
+          <div class="card"><div class="card__body"><h3>Safety Incident Trends</h3><div class="chart-slot"><canvas id="incidentChart"></canvas></div></div></div>
+          <div class="card"><div class="card__body"><h3>Response Time Analysis</h3><div class="chart-slot"><canvas id="responseChart"></canvas></div></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="gov-footer">
+    <div class="container footer-content">
+      <div class="footer-section">
+        <h4>Ministry of Tourism</h4>
+        <p>Government of India</p>
+        <p>Telangana Tourism Development Corporation</p>
+      </div>
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#">Digital India</a></li>
+          <li><a href="#">UMANG Platform</a></li>
+          <li><a href="#">MyGov</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <p>Email: tourism.safety@gov.in</p>
+        <p>Phone: 1363 (Tourist Helpline)</p>
+        <p>Emergency: 112</p>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2025 Government of India</div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
